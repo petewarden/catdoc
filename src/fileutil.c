@@ -190,7 +190,7 @@ void list_charsets(void) {
 	int count,glob_flags=GLOB_ERR;
 #endif
 	char **ptr;
-	for (p=charset_path;p;p=q+1) {
+	for (p=charset_path;p;) {
 		q=strchr(p,LIST_SEP);
 
 		if (q) {
@@ -201,7 +201,6 @@ void list_charsets(void) {
 			strncpy(path_buf,p,q-p);
 			path_buf[q-p]=0;
 		} else {
-			q--;
 			if (strlen(p)>=PATH_BUF_SIZE) continue;
 			strcpy(path_buf,p);
 		}
@@ -248,6 +247,11 @@ void list_charsets(void) {
 		}
 		glob_flags|=GLOB_APPEND;
 #endif
+		if (q) {
+			p = q + 1;
+		} else {
+			p = NULL;
+		}
 	}
 #ifdef __MSDOS__
 	fputs("utf-8\n",stdout);
