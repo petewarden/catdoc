@@ -71,13 +71,12 @@ char *find_file(char *name, const char *path)
 	char *q;
 	char path_buf[PATH_BUF_SIZE];
 	char dir_sep[2]={DIR_SEP,0};
-	for (p=path;p;p=q+1) {
+	for (p=path;p;) {
 		q=strchr(p,LIST_SEP);
 
 		if (q) {
 			if (!prepare_path_buf(path_buf,p,q)) continue;
 		} else {
-			q--;
 			if (!prepare_path_buf(path_buf,p,p+strlen(p))) continue;
 		}
 		strcat(path_buf,dir_sep); /* always one char */
@@ -87,6 +86,11 @@ char *find_file(char *name, const char *path)
 		if (access(path_buf,0)==0) {
 			free(name); 
 			return strdup(path_buf);
+		}
+		if (q) {
+			p = q + 1;
+		} else {
+			p = NULL;
 		}
 	}
 	/* if we are here, nothing found */
